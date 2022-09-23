@@ -11,7 +11,9 @@ async function insert(createRecommendationData: CreateRecommendationData) {
   if (existingRecommendation)
     throw conflictError("Recommendations names must be unique");
 
-  await recommendationRepository.create(createRecommendationData);
+  const result = await recommendationRepository.create(createRecommendationData);
+
+  return result
 }
 
 async function upvote(id: number) {
