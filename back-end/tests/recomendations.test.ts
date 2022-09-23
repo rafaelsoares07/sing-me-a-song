@@ -7,6 +7,8 @@ import app from "../src/app"
 import _linkYoutubeGenerator from "./factorys/linkYoutubeGenerator"
 import _bodyRecomendationFail from "./factorys/bodyRecomendationFail"
 
+import {_createNewRecommendation, _createNewsRecommendationsWithDifferentScores} from "./factorys/createNewRecommendation"
+
 beforeEach(async()=>{
     await prisma.$executeRaw`TRUNCATE TABLE recommendations`
 })
@@ -50,9 +52,29 @@ describe("Testando rota POST /recommendations", ()=>{
     
     });
 
+    it("Deve retornar 409 para um conflito de nomes iguais", async()=>{
+        
+        const recommendation = {
+            name:faker.name.fullName(),
+            youtubeLink:_linkYoutubeGenerator()
+        }
+
+        const result = await supertest(app).post("/recommendations").send(recommendation)
+
+        const createRecommendation = await prisma.recommendation.findUnique({
+            where:{name:recommendation.name}
+        })
+
+        const resultDuplicate = await supertest(app).post("/recommendations").send(recommendation)
+
+       
+
+        expect(resultDuplicate.status).toEqual(409)
+        expect(createRecommendation).not.toBeNull()
+        expect(result.status).toEqual(201)
+    })
     
 });
-
 
 describe("Testando rota POST /recommendations/:id/upvote", ()=>{
 
@@ -86,7 +108,6 @@ describe("Testando rota POST /recommendations/:id/upvote", ()=>{
     })
 
 });
-
 
 describe("Testando rota POST /recommendations/:id/downvote", ()=>{
 
@@ -142,10 +163,74 @@ describe("Testando rota POST /recommendations/:id/downvote", ()=>{
 
 });
 
-
 describe("Testando rota GET /recommendations/:id", ()=>{
 
+    it("Deve retornar 200 quando o id passado existir e consegui pegar uma recomendação",async()=>{
+        const recommendation = {
+            name:faker.name.fullName(),
+            youtubeLink:_linkYoutubeGenerator()
+        }
+
+        const result = await supertest(app).post("/recommendations").send(recommendation)
+
+        const createRecommendation = await prisma.recommendation.findUnique({
+            where:{name:recommendation.name}
+        })
+
+        const id = createRecommendation.id
+
+        const resultFindId = await supertest(app).get(`/recommendations/${id}`).send()
+
+        expect(resultFindId.status).toEqual(200)
+        expect(createRecommendation).not.toBeNull()
+        expect(result.status).toEqual(201)
+    })
+
+    it("Deve retornar 404 quando o id informado não existir", async()=>{
+
+        const resultFindId = await supertest(app).get(`/recommendations/10`).send()
+
+        expect(resultFindId.status).toEqual(404)
+    })
 })
+
+describe("Testanto rota GET /recommendations", ()=>{
+
+    it("Deve retornar 200 quando pegar os 10 ultimos registros do banco de dados", async()=>{
+        
+        let arrayRecommendations = []
+
+        for(let i=5; i>=0; i--){
+            let recommendation = await _createNewRecommendation()
+            arrayRecommendations[i]=recommendation
+        }
+
+        const findAllRecommendations = await supertest(app).get("/recommendations").send()
+
+        
+        expect(findAllRecommendations.status).toEqual(200)
+        expect(findAllRecommendations.body).toEqual(arrayRecommendations)
+        
+    })
+})
+
+describe("Testando rota GET /recommendations/top/:amount", ()=>{
+    
+    it("Deve retornar um array com as recomendacoes ordenadas pelo score", async()=>{
+
+        const entrada = await _createNewsRecommendationsWithDifferentScores()
+        
+        const result = await supertest(app).get("/recommendations/top/4").send()
+
+
+        expect(result.body).toEqual(expect.arrayContaining(entrada))//subconjunto já passa
+        //falta ajustar essa aqui
+
+    })
+    
+})
+
+
 
 
 afterAll(async()=>{
