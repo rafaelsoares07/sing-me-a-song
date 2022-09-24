@@ -9,7 +9,15 @@ export async function resetDB(req:Request, res:Response) {
     res.sendStatus(200)
 }
 
+export async function insertTopList(req:Request, res:Response) {
+    
+    const resul = await e2eService.insertTopList()
+
+    res.sendStatus(200)
+}
+
 
 export const e2eController = {
-    resetDB
+    resetDB,
+    insertTopList
 };

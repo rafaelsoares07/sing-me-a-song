@@ -6,7 +6,14 @@ async function resetDB() {
     return resul
 
 }
+
+async function insertTopList() {
+    const resul = await e2eRepository.insertTopList()
+    return resul
+
+}
   
 export const e2eService={
-    resetDB
+    resetDB,
+    insertTopList
 } 
