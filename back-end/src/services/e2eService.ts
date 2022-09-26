@@ -8,6 +8,7 @@ async function resetDB() {
 }
 
 async function insertTopList() {
+    await e2eRepository.resetDB()
     const resul = await e2eRepository.insertTopList()
     return resul
 

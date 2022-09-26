@@ -4,6 +4,7 @@ import { conflictError, notFoundError } from "../utils/errorUtils.js";
 
 export type CreateRecommendationData = Omit<Recommendation, "id" | "score">;
 
+//FEITA
 async function insert(createRecommendationData: CreateRecommendationData) {
   const existingRecommendation = await recommendationRepository.findByName(
     createRecommendationData.name
@@ -16,6 +17,7 @@ async function insert(createRecommendationData: CreateRecommendationData) {
   return result
 }
 
+//
 async function upvote(id: number) {
   await getByIdOrFail(id);
 
@@ -37,6 +39,7 @@ async function downvote(id: number) {
 
 async function getByIdOrFail(id: number) {
   const recommendation = await recommendationRepository.find(id);
+  console.log(recommendation)
   if (!recommendation) throw notFoundError();
 
   return recommendation;

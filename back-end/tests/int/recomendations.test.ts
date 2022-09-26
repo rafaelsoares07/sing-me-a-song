@@ -1,11 +1,12 @@
 import { faker } from '@faker-js/faker';
 
-import {prisma} from "../src/database"
+import {prisma} from "../../src/database"
 import supertest from "supertest"
-import app from "../src/app"
+import app from "../../src/app"
 
 import _linkYoutubeGenerator from "./factorys/linkYoutubeGenerator"
 import _bodyRecomendationFail from "./factorys/bodyRecomendationFail"
+import { recomendationSucess } from './factorys/recommendationSucess';
 
 import {_createNewRecommendation, _createNewsRecommendationsWithDifferentScores} from "./factorys/createNewRecommendation"
 
@@ -17,10 +18,7 @@ describe("Testando rota POST /recommendations", ()=>{
 
     it("Deve retornar 201 para cadastro feito com sucesso", async()=>{
 
-        const recommendation = {
-            name:faker.name.fullName(),
-            youtubeLink:_linkYoutubeGenerator()
-        }
+        const recommendation = recomendationSucess()
 
         const result = await supertest(app).post("/recommendations").send(recommendation)
 
@@ -54,10 +52,7 @@ describe("Testando rota POST /recommendations", ()=>{
 
     it("Deve retornar 409 para um conflito de nomes iguais", async()=>{
         
-        const recommendation = {
-            name:faker.name.fullName(),
-            youtubeLink:_linkYoutubeGenerator()
-        }
+        const recommendation = recomendationSucess()
 
         const result = await supertest(app).post("/recommendations").send(recommendation)
 
@@ -223,13 +218,28 @@ describe("Testando rota GET /recommendations/top/:amount", ()=>{
         const result = await supertest(app).get("/recommendations/top/4").send()
 
 
-        expect(result.body).toEqual(expect.arrayContaining(entrada))//subconjunto já passa
-        //falta ajustar essa aqui
+        expect(result.body).toEqual(expect.arrayContaining(entrada))
+        expect(result.status).toEqual(200)
 
     })
     
 })
 
+describe("Testando rota GET /recommendations/random", ()=>{
+
+    it("Deve retornar um array com um item dentro dele", async()=>{
+
+        const entrada = await _createNewRecommendation()
+        await supertest(app).post("/recommendations").send(entrada)
+        
+        const result = await supertest(app).get("/recommendations/random").send()
+
+        expect(result.body).toBeInstanceOf(Object)
+        expect(result.status).toEqual(200)
+
+    })
+
+})
 
 
 

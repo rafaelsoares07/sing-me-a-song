@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker"
 import _linkYoutubeGenerator from "./linkYoutubeGenerator"
-import {prisma} from "../../src/database"
+import {prisma} from "../../../src/database"
 
 export async function _createNewRecommendation(){
     const recommendation ={
