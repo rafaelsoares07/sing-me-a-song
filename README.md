@@ -43,9 +43,9 @@ REACT_APP_API_BASE_URL=http://localhost:5000
 
 Use os seguintes comandos para executar os testes do back-end:
 ```
-npm run dev:unit //executa os testes unitários
-npm run dev:int //executa os testes de integração
-npm run dev:test //executa servido em ambiente de testes
+npm run dev:unit //Executa os testes unitários
+npm run dev:int //Executa os testes de integração e os unitários
+npm run dev:test //Executa o servidor em ambiente de testes
 npm start //executa o servidor
 ```
 
@@ -53,8 +53,8 @@ npm start //executa o servidor
 Para executar os testes de E2E, você irá precisar estar com a aplicação React sendo executado no seu broswer, aṕos isso basta abrir o cypress
 e escoolher os testes que você deseja executar.
 ```
-npm start //Iniacializa a aplicação no browser
-npx cypress open //Abre a interface do cypress para executar os testes
+npm start //Inicializa a aplicação no browser
+npx cypress open //Abre a interface do cypress para executar os testes de forma idependente
 ```
 
 
