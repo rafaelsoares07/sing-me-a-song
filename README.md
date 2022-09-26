@@ -49,11 +49,12 @@ npm run dev:test //executa servido em ambiente de testes
 npm start //executa o servidor
 ```
 
-## :bookmark_tabs: Rodando os testes de integração
-Para executar os testes de integração basta usar o script de test, ele irá criar um ambiente próprio para teste, onde teremos um banco de dados dedicado
-exclusivamente para rodar todos os testes.
+## :bookmark_tabs: Rodando os testes E2E
+Para executar os testes de E2E, você irá precisar estar com a aplicação React sendo executado no seu broswer, aṕos isso basta abrir o cypress
+e escoolher os testes que você deseja executar.
 ```
-npm test
+npm start //Iniacializa a aplicação no browser
+npx cypress open //Abre a interface do cypress para executar os testes
 ```
 
 
